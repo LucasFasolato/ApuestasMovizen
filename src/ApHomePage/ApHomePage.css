@@ -1,5 +1,65 @@
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
 .home_size {
     width: 100vw;
     height: 100vh;
     background-color: pink;
 }
+
+.content_box {
+    width: 80%;
+    margin: 0 auto;
+    height: max-content;
+    display: block;
+    position: relative;
+}
+
+.input_box {
+    margin-top: 2vh;
+    width: 100%;
+    border-radius: 4px;
+    padding: 1%;
+    transition: all 0.5s;
+}
+
+.input_box:hover {
+    transform: scale(1.02);
+}
+
+.input_box:focus {
+    transform: scale(1.02);
+}
+
+.button_box {
+    margin: 0;
+    margin-top: 2vh;
+    padding: 1% 3%;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.5s;
+    cursor: pointer;
+}
+
+.button_box:disabled {
+    background-color: #444444;
+}
+
+.results {
+    margin: 0 auto;
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+}
+
+#n1 {
+ font-size: 24px;
+ font-weight: bold;   
+}
+
+#n2 {
+    font-size: 24px;
+    font-weight: bold;   
+   }
