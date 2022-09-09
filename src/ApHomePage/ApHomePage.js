@@ -1,5 +1,5 @@
 import {React, useState, useEffect} from 'react'
-// import './ApHomePage.css';
+import './ApHomePage.css';
 
 function ApHomePage() {
     
@@ -11,39 +11,44 @@ function ApHomePage() {
     const [number1, setNumber1] = useState();
     const [number2, setNumber2] = useState();
     const [resultado, setResultado] = useState("");
+    // const [historial, setHistorial] = useState([{
+    //     estado: "", apuesta:"", saldo:"", ganancia:"", saldofinal:"" 
+    // }]);
+    let [wmaxCont, setWmaxCont] = useState(0);
+    let [wminCont, setWminCont] = useState(0);
+    let [loseCont, setLoseCont] = useState(0);
+    const [historial, setHistorial] = useState([]);
 
     function validateNumber () {
-        if(inputNumber === "") {
-            setValidateB(true);
-        } else if((parseInt(inputNumber) <= 12) && (apuestaValue !== "")) {
-            setValidateB(false);
-        } else {
-            setValidateB(true);
-        }
+        if((parseInt(inputNumber) <= 12) && (parseInt(inputNumber) > 0) && (apuestaValue !== "")) return setValidateB(false);
+        return setValidateB(true);
     }
 
     function validateApuesta () {
         let diferencia = saldo - apuestaValue;
-        if(apuestaValue === "") {
-            setValidateB(true);
-        }
-        if (diferencia < 0) {
-            setValidateB(true);
-        }
+        if((apuestaValue === "") || (diferencia < 0)) setValidateB(true);
     }
 
     function validateResult () {
         let sumaDados = number1+number2;
-        if(sumaDados === parseInt(inputNumber)) {
-            setResultado("Felicitaciones, ganaste el mayor premio. Sumas apuesta X3 a tu saldo.");
+        if(number1==null){
+            setResultado("");
+        } else if(sumaDados === parseInt(inputNumber)) {
+            setResultado("Felicitaciones!! Premio mayor. Sumas apuesta X3.");
+            setHistorial([...historial, `Ganaste  - Apuesta: $${apuestaValue} - Saldo: ${saldo} + ${apuestaValue*3}`])
+            setWmaxCont(wmaxCont+1);
             setSaldo(saldo+apuestaValue*3);
         } else if((number1 === parseInt(inputNumber)) || (number2 === parseInt(inputNumber)))
         {
-            setResultado(`Felicitaciones, Coincidio uno de los numeros. Sumas ${apuestaValue*2} a tu saldo.`);
+            setResultado(`Felicitaciones! Una coincidencia. Sumas ${apuestaValue*2} a tu saldo.`);
+            setHistorial([...historial, `Ganaste  - Apuesta: $${apuestaValue} - Saldo: ${saldo} + ${apuestaValue*2}`])
             setSaldo(saldo+apuestaValue*2);
+            setWminCont(wminCont+1);
         } else {
             if(number1!=null)
+            setHistorial([...historial, `Perdiste - Apuesta: $${apuestaValue} - Saldo: ${saldo}`])
             setResultado("Perdiste");
+            setLoseCont(loseCont+1);
         }
     }
     
@@ -68,30 +73,70 @@ function ApHomePage() {
 
     useEffect(() => {
         validateResult();
+        console.log(historial);
     }, [bandera]);
 
     return (
     <div className='home_size'>
+        <h1 className='title_h1'>SISTEMA DE APUESTAS</h1>
         <div className='content_box'>
-            <h1>Juego de apuestas</h1>
             <section className='generation_apuesta'>
-                <h2>Saldo: {saldo}</h2>
-                <input className='input_box' id='inputNumber' onChange={(event) => setInputNumber(event.target.value)}  placeholder='Ingrese un numero del 1 al 12'/>
-                <input className='apuesta_box' id='apuestavalue' onChange={(event) => setApuestaValue(event.target.value)}  placeholder='Valor de su apuesta en $'/>
-                <button className='button_box' disabled={validateB} onClick={()=> {generateNumbers(); updateSaldo()}}>Jugar</button>
+                <div className='saldo_histo_content'>
+                    <h2 className='saldo'>SALDO: ${saldo}</h2>
+                    <div>
+                        <h2 className='histoCont'>HISTORIAL DE APUESTAS: </h2>
+                        <h3 className='histoCont'>Premio máximo: {wmaxCont} | Premio mínimo: {wminCont} | Pérdidas: {loseCont}</h3>
+                    </div>    
+                </div>
+                <div className='inputs_content'>
+                    <div className='apuesta_content'>
+                        <h3 className='apuesta_h3'>Número a apostar</h3>
+                        <input className='input_box' id='inputNumber' onChange={(event) => setInputNumber(event.target.value)}  placeholder='Ingrese un numero del 1 al 12'/>
+                    </div>
+                    <div className='apuesta_content'>
+                        <h3 className='apuesta_h3'>Apuesta en pesos</h3>
+                        <input className='input_box' id='apuestavalue' onChange={(event) => setApuestaValue(event.target.value)}  placeholder='Valor de su apuesta en $'/>
+                    </div>
+                    <div className='button_content'>
+                        <button className='button_box' disabled={validateB} onClick={()=> {generateNumbers(); updateSaldo()}}>Jugar</button>
+                    </div>
+                </div>
             </section>
             
             <section className='result_apuesta'>
-                <h2>Su apuesta es: {inputNumber}</h2>
-                <div className='randoms_numbers'>
-                    <h2>Los numeros obtenidos en los dados fueron:</h2>
-                    <div className='results'>
-                    <p id='n1'>{number1}</p>
-                    <p id='n2'>{number2}</p>
+                <div className='result_apuesta_content'>
+                    <h2 className='apuesta_res'>SU APUESTA ES: {inputNumber}</h2>
+                    <div className='randoms_numbers'>
+                        <h2 className='res_dados'>Los numeros obtenidos en los dados fueron:</h2>
+                        <div className='results'>
+                            <div className='result_box'>
+                                <p id='n1'>{number1}</p>
+                            </div>
+                            <div className='result_box'>
+                                <p id='n2'>{number2}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 className='res_dados'>{resultado}</h2>
+                    
+                </div>
+                <div className='historial_result_content'>
+                    <h2 className='apuesta_res'>HISTORIAL</h2>
+                    <div className='historial_result'>
+                        {historial &&
+                            historial.map(histo => {
+                                return (
+                                    <div className='histo_result'>
+                                        {histo}
+                                    </div>
+                                )
+                        })}
                     </div>
                 </div>
-                <h2>{resultado}</h2>
+                
+                
             </section>
+            
         </div>
     </div>
   );
