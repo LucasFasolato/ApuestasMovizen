@@ -26,7 +26,7 @@ function ApHomePage() {
 
     function validateApuesta () {
         let diferencia = saldo - apuestaValue;
-        if((apuestaValue === "") || (diferencia < 0)) setValidateB(true);
+        if((apuestaValue === "") || (diferencia < 0) || (saldo === 0)) setValidateB(true);
     }
 
     function validateResult () {
@@ -62,8 +62,18 @@ function ApHomePage() {
     }
 
     function updateSaldo () {
-        setSaldo(saldo-apuestaValue);
-        setBandera(!bandera)
+        saldo === 0 ? setValidateB(true) : setSaldo(saldo-apuestaValue);setBandera(!bandera);
+    }
+
+    function checkValue () {
+        if(saldo - apuestaValue >= 0) {
+            generateNumbers(); 
+            updateSaldo()
+        } else {
+            alert("SALDO INSUFICIENTE");
+            setValidateB(true);
+        }
+
     }
 
     useEffect(() => {
@@ -98,7 +108,7 @@ function ApHomePage() {
                         <input className='input_box' id='apuestavalue' onChange={(event) => setApuestaValue(event.target.value)}  placeholder='Valor de su apuesta en $'/>
                     </div>
                     <div className='button_content'>
-                        <button className='button_box' disabled={validateB} onClick={()=> {generateNumbers(); updateSaldo()}}>Jugar</button>
+                        <button className='button_box' disabled={validateB} onClick={()=> checkValue () }>Jugar</button>
                     </div>
                 </div>
             </section>
